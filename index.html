@@ -106,7 +106,56 @@ tbody tr:last-child td {
 tbody tr:hover {
   background-color: #f9fafb;
 }
-    
+
+/* =========================
+   MOBILE RESPONSIVE FIXES
+   ========================= */
+
+/* 1. Safe mobile padding */
+main {
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+/* 2. Improve text readability on mobile */
+@media (max-width: 768px) {
+  p, li {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+}
+
+/* 3. Better tap targets */
+a, button {
+  min-height: 44px;
+}
+
+/* 4. Cards breathe better on mobile */
+@media (max-width: 768px) {
+  .card {
+    padding: 18px;
+  }
+}
+
+/* 5. Code blocks don’t dominate the screen */
+@media (max-width: 600px) {
+  pre {
+    font-size: 12px;
+    padding: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 6. Tables don't break layout (scroll instead of overflow) */
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+  }
+}
+
   </style>
 </head>
 
