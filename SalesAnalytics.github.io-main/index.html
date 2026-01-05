@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sales Analysis Business Case</title>
+
+  <style>
+    :root{
+      --bg:#FFF5F5;            /* light warm background */
+      --ink:#1f2937;
+      --muted:#4b5563;
+      --accent:#FCA5A5;        /* red theme */
+      --max:1100px;
+      --radius:12px;
+      --bar-h:52px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Top bar */
+    #topbar{
+      position:sticky; top:0; z-index:99;
+      background:linear-gradient(90deg, var(--accent), #fff);
+      padding:8px 12px; border-bottom:1px solid #0001;
+    }
+    #topbar .wrap{
+      max-width:var(--max); margin:0 auto;
+      display:flex; gap:8px; align-items:center;
+      flex-wrap:nowrap; overflow-x:auto; white-space:nowrap;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
+    }
+    #topbar a{
+      flex:0 0 auto;
+      display:inline-block; padding:10px 12px; font-size:14px;
+      color:#111; text-decoration:none; border-radius:8px;
+    }
+    #topbar a:hover, #topbar a:focus-visible{ background:#ef4444; color:#fff; outline:none }
+
+    main{max-width:var(--max); margin:0 auto; padding:24px 16px}
+    h1{
+      text-align:center; text-decoration:underline; margin:8px 0 18px;
+      font-size:clamp(20px, 4.5vw, 28px);
+    }
+    h2{ margin:24px 0 8px; font-size:clamp(18px, 3.8vw, 24px); }
+    h3{ margin:18px 0 8px; font-size:clamp(16px, 3.3vw, 20px); }
+    p{color:var(--muted)}
+    section{ scroll-margin-top: calc(var(--bar-h) + 14px); }
+
+    .card{
+      background:#fff; border:1px solid #0001; border-radius:var(--radius);
+      padding:16px; margin-bottom:16px; box-shadow:0 8px 24px #0000000f;
+    }
+
+    img{max-width:100%; height:auto; display:block}
+    .shot{ width:100%; border:1px solid #0002; border-radius:10px; background:#fafafa; }
+    .shot-full{
+      width:100%; max-width:900px; margin:0 auto;
+      border:1px solid #0002; border-radius:10px; background:#fafafa;
+    }
+    figure{margin:0}
+    figure figcaption{font-size:.9rem; color:#666; margin-top:6px}
+    .note{ text-align:center; font-size:.95rem; opacity:.8; margin:8px 0 0 }
+
+    .grid-2{ display:grid; gap:14px }
+    @media (min-width:900px){ .grid-2{ grid-template-columns:1fr 1fr } }
+
+    pre{
+      background:#0f172a; color:#e5e7eb; padding:14px; border-radius:10px;
+      border:1px solid #0003; font-size:13px; line-height:1.5;
+      overflow:auto; white-space:pre-wrap; word-break:break-word;
+    }
+    code{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace }
+    @media (max-width:700px){ main{ padding:18px 12px } .card{ padding:14px } }
+    @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
+
+thead th {
+  text-align: left;
+  font-weight: 600;
+  padding: 12px 10px;
+  border-bottom: 2px solid #e5e7eb; /* stronger header divider */
+}
+
+tbody td {
+  padding: 12px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #e5e7eb; /* row dividers */
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Optional: subtle hover for polish */
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+    
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <nav id="topbar" aria-label="Page sections">
+    <div class="wrap">
+      <a href="#requirements">Business Requirements & User Stories</a>
+      <a href="#sql">Data Cleaning & Transformation</a>
+      <a href="#model">Data Modeling</a>
+      <a href="#dashboard">Power BI Dashboard</a>
+
+    </div>
+  </nav>
+
+  <main>
+    <h1>Sales Analytics Business Case</h1>
+
+
+<!-- 1) BUSINESS REQUIREMENTS & USER STORIES (COMBINED) -->
+<details class="stakeholder-context">
+  <summary><strong>View original stakeholder request (context)</strong></summary>
+
+  <div class="email-box">
+    <p><strong>From:</strong> Steven – Sales Manager</p>
+    <p><strong>Context:</strong> Initial request outlining reporting needs.</p>
+
+    <p>
+      We need to improve our internet sales reports and move from static reports
+      to interactive dashboards. The goal is to analyze sales by product, customer,
+      and time, with filtering by salesperson and comparison against budget.
+    </p>
+
+    <p>
+      The provided budget is for 2021, and analysis typically includes two years
+      of historical context.
+    </p>
+  </div>
+</details>
+
+<section id="requirements" class="card">
+  <h2>Business Requirements &amp; User Stories</h2>
+
+  <!-- One-line business context (keep it short) -->
+  <p class="summary-text">
+    <strong>Business Objective:</strong> Replace static internet sales reports with an executive, interactive dashboard to analyze sales performance and budget variance.
+  </p>
+
+  <!-- Optional: compact stakeholder/goal block (keep if you like the scannability) -->
+  <div class="card summary-card">
+    <p><strong>Stakeholder:</strong><br>
+      Steven — Sales Manager
+    </p>
+
+    <p><strong>Primary Goal:</strong><br>
+      Analyze <strong>sales by product, customer, and time</strong>, with salesperson-level filtering and comparison against <strong>budget</strong>.
+    </p>
+  </div>
+
+  <h3>Defined User Stories</h3>
+  <table class="stories">
+    <thead>
+      <tr>
+        <th>No #</th>
+        <th>As a (Role)</th>
+        <th>I want (Request / Demand)</th>
+        <th>So that I (User Value)</th>
+        <th>Acceptance Criteria</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Sales Manager</td>
+        <td>To get a dashboard overview of internet sales</td>
+        <td>Can follow better which customers and products sells the best</td>
+        <td>A Power BI dashboard which updates data once a day</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Sales Representative</td>
+        <td>A detailed overview of Internet Sales per Customers</td>
+        <td>Can follow up with customers that purchase the most and who we can sell more to</td>
+        <td>A Power BI dashboard which allows me to filter data for each customer </td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Sales Representative</td>
+        <td>A detailed overview of Internet Sales per Products</td>
+        <td>Can follow up with my Products that sells the most</td>
+        <td>A Power BI dashboard which allows me to filter data for each Product</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Sales Manager</td>
+        <td>A dashboard overview of Internet sales</td>
+        <td>Follow sales over time against budget</td>
+        <td>A Power BI dashboard with graphs and KPIs comparing against budget</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- Keep stakeholder email context as a separate collapsed block elsewhere -->
+</section>
+
+
+    <!-- 2) DATA CLEANING & TRANSFORMATION -->
+    <section id="sql" class="card">
+      <h2>Data Cleaning &amp; Transformation</h2>
+      <p>
+        To create the necessary data model for doing analysis and fulfilling the business needs defined in the user stories, the following tables were extracted using SQL.
+      </p>
+      <p>
+        One data source (sales budgets) were provided in Excel format and were connected in the data model in a later step of the process.
+
+      </p>
+      <p>
+        Below are the SQL statements for cleaning and transforming necessary data.
+      </p>
+<h3>DIM_Calendar</h3>
+<p>
+Created a clean date dimension to support time-based analysis, trend reporting, and date navigation
+across dashboards.
+</p>
+
+<pre><code class="sql">
+-- Cleaned DIM_Date Table
+SELECT
+  [DateKey],
+  [FullDateAlternateKey] AS Date,
+  [EnglishDayNameOfWeek] AS Day,
+  [EnglishMonthName] AS Month,
+  LEFT([EnglishMonthName], 3) AS MonthShort,
+  [CalendarMonth] AS MonthNo,
+  [CalendarQuarter] AS Quarter,
+  [CalendarYear] AS Year
+FROM [AdventureWorksDW2019].[dbo].[DimDate]
+WHERE CalendarYear >= 2019
+</code></pre>
+
+<h3>DIM_Customers</h3>
+<p>
+Standardized customer attributes and enriched customer records with geographic information to
+enable customer-level filtering and analysis.
+</p>
+
+<pre><code class="sql">
+-- Cleaned DIM_Customers Table
+SELECT
+  c.CustomerKey,
+  c.FirstName + ' ' + c.LastName AS FullName,
+  CASE c.Gender
+    WHEN 'M' THEN 'Male'
+    WHEN 'F' THEN 'Female'
+  END AS Gender,
+  c.DateFirstPurchase,
+  g.City AS CustomerCity
+FROM [AdventureWorksDW2019].[dbo].[DimCustomer] c
+LEFT JOIN [AdventureWorksDW2019].[dbo].[DimGeography] g
+  ON c.GeographyKey = g.GeographyKey
+ORDER BY c.CustomerKey ASC
+</code></pre>
+
+<h3>DIM_Products</h3>
+<p>
+Prepared product attributes and category hierarchies to support product performance analysis
+and category-level drill-down.
+</p>
+
+<pre><code class="sql">
+-- Cleaned DIM_Products Table
+SELECT
+  p.ProductKey,
+  p.EnglishProductName AS ProductName,
+  sc.EnglishProductSubcategoryName AS SubCategory,
+  pc.EnglishProductCategoryName AS Category,
+  p.Color,
+  p.Size,
+  p.ProductLine,
+  ISNULL(p.Status, 'Outdated') AS ProductStatus
+FROM [AdventureWorksDW2019].[dbo].[DimProduct] p
+LEFT JOIN [AdventureWorksDW2019].[dbo].[DimProductSubcategory] sc
+  ON p.ProductSubcategoryKey = sc.ProductSubcategoryKey
+LEFT JOIN [AdventureWorksDW2019].[dbo].[DimProductCategory] pc
+  ON sc.ProductCategoryKey = pc.ProductCategoryKey
+ORDER BY p.ProductKey ASC
+</code></pre>
+
+<h3>FACT_InternetSales</h3>
+<p>
+Filtered and structured internet sales transactions to support KPI calculation, trend analysis,
+and budget comparison across time, product, and customer dimensions.
+</p>
+
+<pre><code class="sql">
+-- Cleaned FACT_InternetSales Table
+SELECT
+  ProductKey,
+  OrderDateKey,
+  DueDateKey,
+  ShipDateKey,
+  CustomerKey,
+  SalesAmount,
+  OrderQuantity,
+  UnitPrice,
+  TotalProductCost
+FROM [AdventureWorksDW2019].[dbo].[FactInternetSales]
+WHERE
+  LEFT(OrderDateKey, 4) >= YEAR(GETDATE()) - 2
+ORDER BY OrderDateKey ASC
+</code></pre>
+
+    </section>
+
+    <!-- 3) DATA MODEL -->
+    <section id="model" class="card">
+      <h2>Data Modeling</h2>
+          <p>
+            Below is a screenshot of the data model after cleansed and prepared tables were read into Power BI.
+          </p>
+          <p>
+            This data model also shows how FACT_Budget has been connected to FACT_InternetSales and other necessary DIM tables.
+          </p>
+
+        <div>
+          <h3>Model Diagram</h3>
+          <figure>
+            <img class="shot" src="Images/Data_Model.png" alt="Power BI star schema model for internet sales + budget">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4) DASHBOARD -->
+    <section id="dashboard" class="card">
+      <h2>Sales Management Power BI Dashboard</h2>
+      <figure>
+        <img class="shot-full" src="Images/Sales_Dashboard_Overview.png"
+             alt="Sales Analysis – Overview dashboard with sales KPIs and budget variance" />
+        <figcaption class="note">
+          Static preview for portfolio purposes only.
+        </figcaption>
+      </figure>
+
+      <div style="margin-top:12px;">
+        <ul>
+          <li><strong>Core questions:</strong> What products are selling, to which customers, and how trends change over time?</li>
+          <li><strong>Filters:</strong> Product, Customer, Date (and Salesperson if included).</li>
+          <li><strong>Benchmark:</strong> Actual sales vs <strong>2021 budget</strong> with variance tracking.</li>
+        </ul>
+      </div>
+    </section>
+
+
+  </main>
+</body>
+</html>
